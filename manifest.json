@@ -1,0 +1,32 @@
+{
+  "name": "JoltEd Chrome Extension Prototype",
+  "description": "Protoype extension built with React and OpenAI API",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "bolt.png"
+  },
+  "permissions": [
+    "scripting",
+    "tabs",
+    "activeTab",
+    "nativeMessaging"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [ "api.js" ],
+      "matches": [ "<all_urls>" ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
+}
