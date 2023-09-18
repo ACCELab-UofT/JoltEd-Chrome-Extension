@@ -12,7 +12,7 @@
 <!-- ABOUT -->
 ## About
 <p align="center">
-  <img width="90%" alt="image" src="https://github.com/jaeyonglee3/JoltEd-Chrome-Extension/assets/73498725/6fdcf46c-33d5-4151-86b1-0e7028efc131">
+  <img width="90%" alt="image" src="https://github.com/jaeyonglee3/JoltEd-Chrome-Extension/assets/73498725/81f19407-2396-454c-87ac-d91287eb7823">
 </p>
 
 
