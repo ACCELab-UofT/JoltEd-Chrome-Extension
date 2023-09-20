@@ -33,7 +33,7 @@ Navigate to the ```server``` directory of this project and install the dependenc
    ```
 Then, on Chrome, navigate to ```chrome://extensions``` and press the load unpacked button in the top left. Navigate to this project folder and select it. The extension should now be added to your list of Chrome extensions. Pin it to see it in the top right of Chrome (little red circle favicon).
 
-Go back to the ```server``` directory of this project from any terminal and start the server:
+Go back to the ```server``` directory of this project and add a ```.env``` file with ```OPENAI_API_KEY``` set to your API key. Start the server:
    ```sh
    python3 app.py
    ```
