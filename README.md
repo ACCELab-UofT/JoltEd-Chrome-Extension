@@ -27,15 +27,26 @@ Modern-day students consume educational material, including textbooks and articl
 
 <!-- LICENSE -->
 ## Getting Started
-To start, open up a terminal or a command prompt and navigate to the ```server``` directory of this project. Once you are there, type the following command:
+Navigate to the ```server``` directory of this project and install the dependencies if you don't have them already:
    ```sh
    pip install -r requirements.txt
    ```
-Then, on Chrome, navigate to ```chrome://extensions``` and press the load unpacked button in the top left. Navigate to this project folder and select it. The extension should now be added to your list of Chrome extensions.
+Then, on Chrome, navigate to ```chrome://extensions``` and press the load unpacked button in the top left. Navigate to this project folder and select it. The extension should now be added to your list of Chrome extensions. Pin it to see it in the top right of Chrome (little red circle favicon).
 
-Before being able to transform any online content, we need to start the backend server. Go back to the ```server``` directory of this project from any terminal and type this to get the sever started:
+Go back to the ```server``` directory of this project from any terminal and start the server:
    ```sh
    python3 app.py
    ```
 
-## Known Issues
+Inspect the popup window to see the console outputs of text received and the responses from Open AI. **Inspect the popup, and then highlight text (see known issues)**
+
+## Known Issues / Next Steps
+* The popup window must be open as the "receiving end" to receive highlighted text from the content.js file. Users can't open the popup and then highlight text because Chrome forces extension popups to close when something else is clicked.
+  * We get around this during development by always having the dev tool window open for the popup (it doesn't close when it is being inspected) and then highlighting text and interacting w/ the extension.
+* The app.py file sometimes needs to be run with ```uvicorn app:app --host 0.0.0.0 --port 8000 --reload``` to get the server started.
+* Next step -> change text directly on webpage with transformed text.
+
+## How it works
+* The content.js file is the content script that runs in the context of the webpage and has access to the webpage DOM. Its job is to get the user’s currently highlighted text and send it to background.js. 
+* The popup.js file takes the responses from the HTML form you see in the popup, constructs a prompt, and makes the request to the backend to transform the text + receives the response (just logs it out to console for now). 
+* The background.js script is active and running as long as the browser is open and the extension is enabled. It acts as the intermediary between the content.js file and popup.js file (so highlighted text can be sent to popup.js)
