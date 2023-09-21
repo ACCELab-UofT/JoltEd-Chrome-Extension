@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "jolted-chrome-ext-server"
+version = "0.1.0"
+description = ""
+authors = ["Nathan Laundry <nathan.laundry@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.103.1"
+requests = "^2.31.0"
+poetry-dotenv = "^0.4.0"
+uvicorn = "^0.23.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
