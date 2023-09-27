@@ -3,30 +3,31 @@
   "description": "Protoype extension built with React and OpenAI API",
   "version": "1.0",
   "manifest_version": 3,
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "bolt.png"
-  },
   "permissions": [
     "scripting",
     "tabs",
     "activeTab",
-    "nativeMessaging"
+    "nativeMessaging",
+    "storage"
   ],
   "web_accessible_resources": [
     {
-      "resources": [ "api.js" ],
+      "resources": [ "src/main.js", "src/popupMod.js", "src/selectionMod.js", "src/api.js", "src/popup.js", "src/popupTemplate.js", "src/styles/tailwind.css"  ],
       "matches": [ "<all_urls>" ]
     }
   ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["src/content.js"],
+    "run_at": "document_end"
     }
   ],
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "src/background.js",
     "type": "module"
-  }
+  },
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self';"
+    }
 }

@@ -16,3 +16,9 @@ uvicorn = "^0.23.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+
+[tool.poetry.scripts]
+dev-server = "uvicorn jolted_chrome_ext_server.server:app --reload"
+start = "uvicorn jolted_chrome_ext_server.server:app --reload"
