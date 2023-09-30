@@ -51,6 +51,9 @@ async function handleFormSubmit(event) {
         }
 
         const result = await response.json();
+        chrome.storage.local.set({ apiResponse: result }, () => {
+            console.log('Response saved to local storage.');
+        });
         console.log("Response from FastAPI server: ", result.message);
     } catch (error) {
         console.error("Error:", error);

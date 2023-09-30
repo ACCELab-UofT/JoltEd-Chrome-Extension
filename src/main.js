@@ -1,4 +1,3 @@
-
 import { handleMouseUp, handleMouseDown } from './selectionMod.js';
 
 console.log("Welcome to prototype V3 (from content script)");
