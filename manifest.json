@@ -12,13 +12,14 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": [ "src/main.js", "src/popupMod.js", "src/selectionMod.js", "src/api.js", "src/popup.js", "src/popupTemplate.js", "src/styles/tailwind.css"  ],
+      "resources": [ "src/main.js", "src/popupMod.js", "src/selectionMod.js", "src/api.js", "src/popup.js", "src/popupTemplate.js", "src/textReplacementMod.js", "src/styles/tailwind.css"  ],
       "matches": [ "<all_urls>" ]
     }
   ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
+      "all_frames": true,
       "js": ["src/content.js"],
     "run_at": "document_end"
     }

@@ -1,4 +1,5 @@
 let highlightedText = '';
+// import { replaceText } from './textReplacementMod.js';
 
 export function initializePopup() {
     console.log("Popup initialized");
