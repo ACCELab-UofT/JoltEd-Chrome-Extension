@@ -9,9 +9,9 @@ export function findAndReplaceText() {
     });
 
     chrome.storage.local.get(['apiResponse'], (result) => {
-    if (result.apiResponse) {
-        apiResponse = result.apiResponse;
-    }
+        if (result.apiResponse) {
+            apiResponse = result.apiResponse;
+        }
     });
 
     // Create a regular expression with the 'g' flag for global search
