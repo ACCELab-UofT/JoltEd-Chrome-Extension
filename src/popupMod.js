@@ -58,6 +58,8 @@ async function handleFormSubmit(event) {
     } catch (error) {
         console.error("Error:", error);
     }
+
+    chrome.runtime.sendMessage({ action: "replaceText"});  // this message can only go to background script
 }
 
 // Function to get the selected value of a radio button group
