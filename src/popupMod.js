@@ -90,13 +90,13 @@ function constructPrompt(formValues) {
     } = formValues;
 
     const promptTemplates = {
-        personalize: `${highlightedText}\n\nTransform the given text but YOU MUST MAINTAIN its length within -1/+1 paragraph. Assume it is educational material that you will now modify to be personalized to the student's area of interest which is ${areaOfInterest}. Adjust the wording and examples, conceptual explanations and/or metaphors to be appropriate to the level of expertise of the student which is ${levelOfExpertise}. Replace any explanations, usecases, examples, practice problems, or other components of the educational material to be appropriate for the area of interest which is ${areaOfInterest}. Phrase all wordings as if you were a ${instructorIdentity}. \n\n `,
+        personalize: `${highlightedText}\n\nThe given text is educational material like an explanation, example, or practice problem for a concept. You will transform it to include elements that are relevant to a student with the interest: ${areaOfInterest} and level of expertise with the topic: ${levelOfExpertise}. Your goal is still to explain the topic in the preceding text but explain it in such a way that someone with the interest ${areaOfInterest} will find it relevant and or make it clear how the concept can be used by someone with the interest ${areaOfInterest}. Phrase all wordings as if you were a ${instructorIdentity}. the length of the new text MUST BE WITHIN +1 or -1 Paragraph`,
         simplify: `${highlightedText}\n\nAs an ${instructorIdentity} simplify the given text while keeping the core ideas the same. Make it more understandable for someone of a level of expertise ${levelOfExpertise}.`,
-        concreteExample: `${highlightedText}\n\nGiven the topic in this text above, create a concrete example of how it can be applied that is personalized to the student's area of interest which is ${areaOfInterest}. Ensure that your concrete example is appropriate for a student with the following level of expertise: ${levelOfExpertise}. Phrase all wordings as a ${instructorIdentity} would.`,
+        concreteExample: `${highlightedText}\n\nGiven the topic in this text above, create a concrete example of how it can be applied by someone with an area of interest in ${areaOfInterest}. Ensure that your concrete example is appropriate for a student with the following level of expertise: ${levelOfExpertise}. Phrase all wordings as a ${instructorIdentity} would.`,
         metaphoricalExplanation: `${highlightedText}\n\nGiven the topic in this text above, create a metaphorical or analogy-based explanation of the topic that is personalized to the student's area of interest which is ${areaOfInterest}. Make sure to use references and concepts that are relevant to someone with an interest in ${areaOfInterest}. Ensure that your metaphorical or analogy-based explanation is appropriate for a student with the following level of expertise: ${levelOfExpertise}. Phrase all wordings as a ${instructorIdentity} would.`,
     };
 
-    return promptTemplates[formValues.transformationType] || '';
+    return promptTemplates[formValues.transformationType] || promptTemplates.personalize;
 }
 
 /**
