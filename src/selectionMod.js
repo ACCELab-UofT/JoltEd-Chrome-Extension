@@ -6,14 +6,43 @@ const BOLT_ICON_ID = "boltIcon";
 const POPUP_CONTAINER_ID = "joltedExtensionPopupContainer";
 
 export function handleMouseUp(event) {
-    let selectedText = window.getSelection().toString().trim();
-    if (selectedText.length > 0) {
-        chrome.storage.local.set({ highlightedText: selectedText }, () => {
-            console.log('Highlighted text saved.');
-            console.log(selectedText);
+    let selection = window.getSelection();
+    console.log(selection.rangeCount)
+    if (selection.rangeCount > 0 && selection.toString().length > 0) {
+        let range = selection.getRangeAt(0);
+        let highlightedText = range.toString().trim();
+
+        console.log(range.startContainer)
+
+        let rangeDetails = {
+            startContainerPath: getNodePath(range.startContainer),
+            startOffset: range.startOffset,
+            endContainerPath: getNodePath(range.endContainer),
+            endOffset: range.endOffset
+        };
+
+        showBoltIcon(event, selection.getRangeAt(0));
+
+        // Store the range's details and highlighted text for later use
+        chrome.storage.local.set({
+            highlightedText: highlightedText,
+            rangeDetails: rangeDetails
+        }, () => {
+            console.log('Highlighted text and range details saved.');
         });
-        showBoltIcon(event);
     }
+}
+function getNodePath(node) {
+    console.log(document.body.childNodes)
+    console.log(document.childNodes)
+    const path = [];
+    while (node && node.parentNode) {
+        path.unshift(Array.from(node.parentNode.childNodes).indexOf(node));
+        node = node.parentNode;
+    }
+    // it's adding 2 extra ones here ... I think probably something like HTML, BODY
+    return path.slice(2);
+    // return path;
 }
 
 export function handleMouseDown(event) {
@@ -26,14 +55,16 @@ export function handleMouseDown(event) {
 /**
  * Display the bolt icon near the selected text
  * @param {MouseEvent} event 
+ * @param {Range} range - The selected range
  */
-function showBoltIcon(event) {
-    let rect = window.getSelection().getRangeAt(0).getBoundingClientRect();
+function showBoltIcon(event, range) {
+    let rects = range.getClientRects();
+    let lastRect = rects[rects.length - 1]; // get the last rectangle
     let bolt = document.getElementById(BOLT_ICON_ID);
 
     // Adjust the bolt's positioning calculation
-    bolt.style.left = `${rect.right + window.scrollX}px`;
-    bolt.style.top = `${rect.top + window.scrollY}px`;
+    bolt.style.left = `${lastRect.right + window.scrollX}px`;
+    bolt.style.top = `${lastRect.top + window.scrollY}px`;
     bolt.style.display = "block";
 
     bolt.onclick = function() {
@@ -46,7 +77,7 @@ function showBoltIcon(event) {
  */
 function showJoltedPopup() {
     const container = document.getElementById(POPUP_CONTAINER_ID);
-    
+
     container.innerHTML = popupTemplate;
     container.style.display = 'block'; // show the container
 
