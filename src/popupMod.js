@@ -1,88 +1,112 @@
+// Constants
+const serverBaseURL = 'http://localhost:8000';
+const DEFAULT_VALUES = {
+    instructorIdentity: "Colleague with an expertise in Computer Science",
+    levelOfExpertise: "Beginner",
+    areaOfInterest: "Computer Science",
+};
+
 let highlightedText = '';
 
+/**
+ * Initialize the popup functionality
+ */
 export function initializePopup() {
     console.log("Popup initialized");
 
+    retrieveHighlightedText();
+    
+    const processButton = document.getElementById('processButton');
+    processButton.addEventListener('click', handleFormSubmit);
+}
+
+/**
+ * Retrieve highlighted text from chrome storage
+ */
+function retrieveHighlightedText() {
     chrome.storage.local.get(['highlightedText'], (result) => {
         if (result.highlightedText) {
             highlightedText = result.highlightedText;
             console.log('Retrieved highlighted text:', highlightedText);
         }
     });
-
-    const form = document.querySelector('form');
-
-    const processButton = document.getElementById('processButton');
-    processButton.addEventListener('click', handleFormSubmit);
 }
 
+/**
+ * Handle form submission, sending a message to the background script and closing the popup
+ */
 async function handleFormSubmit(event) {
-    console.log("handle form submit")
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
 
-    // Get form values
-    const formValues = {
-        transformationType: getSelectedRadioValue('transformationType'),
-        instructorIdentity: document.querySelector('[name="instructorIdentity"]').value,
-        levelOfExpertise: document.querySelector('[name="levelOfExpertise"]').value,
-        areaOfInterest: document.querySelector('[name="areaOfInterest"]').value,
-    };
-
+    const formValues = collectFormValues();
     console.log("submit button pressed with transformation type: ", formValues.transformationType);
 
-    try {
-        // Construct the request body
-        const requestBody = {
-            prompt: constructPrompt(formValues), // Construct the prompt as needed
-        };
+    const requestBody = {
+        prompt: constructPrompt(formValues),
+    };
+    chrome.runtime.sendMessage({ action: "replaceText", body: requestBody });
 
-        // Make a POST request to your FastAPI server
-        const response = await fetch('http://localhost:8000/ask-gpt', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch from FastAPI server');
-        }
-
-        const result = await response.json();
-        console.log("Response from FastAPI server: ", result.message);
-    } catch (error) {
-        console.error("Error:", error);
-    }
+    closePopup();
 }
 
-// Function to get the selected value of a radio button group
+/**
+ * Collect values from the form
+ */
+function collectFormValues() {
+    return {
+        transformationType: getSelectedRadioValue('transformationType'),
+        instructorIdentity: getValueByName('instructorIdentity'),
+        levelOfExpertise: getValueByName('levelOfExpertise'),
+        areaOfInterest: getValueByName('areaOfInterest'),
+    };
+}
+
+/**
+ * Get value from an input element by its name
+ * @param {string} name - name attribute of the input element
+ */
+function getValueByName(name) {
+    return document.querySelector(`[name="${name}"]`).value;
+}
+
+/**
+ * Get the selected value of a radio button group
+ * @param {string} name - name attribute of the radio button group
+ */
 function getSelectedRadioValue(name) {
     const selectedRadio = document.querySelector(`input[name="${name}"]:checked`);
     return selectedRadio ? selectedRadio.value : '';
 }
 
-// Function to construct the prompt based on formValues
+/**
+ * Construct the prompt based on formValues
+ * @param {object} formValues - form values collected
+ */
 function constructPrompt(formValues) {
-    let prompt = '';
-    const instructorIdentity = formValues.instructorIdentity || "professor of computer science";
-    const levelOfExpertise = formValues.levelOfExpertise || "high";
-    const areaOfInterest = formValues.areaOfInterest || "theoretical computer science";
-    switch (formValues.transformationType) {
-        case 'personalize':
-            prompt = `Transform the following text and maintain its length within -1/+1 paragraph. Assume it is educational material that you will now modify to be more personalized. Adjust the wording and examples, conceptual explanations and/or metaphors to be appropriate to the level of expertise provided which is ${levelOfExpertise}. Replace any explanations, usecases, examples, practice problems, or other components of the educational material to be appropriate for the area of interest which is ${areaOfInterest}. Phrase all wordings as if you were a ${instructorIdentity}. \n\n ${highlightedText}`;
-            break;
-        case 'simplify':
-            prompt = `As a ${instructorIdentity} with a level of expertise of ${levelOfExpertise} and an area of interest in ${areaOfInterest}, simplify the following text while keeping the core ideas intact. Make it more understandable for a beginner. \n\n ${highlightedText}`;
-            break;
-        case 'concreteExample':
-            prompt = `As a ${instructorIdentity} with a level of expertise of ${levelOfExpertise} and an area of interest in ${areaOfInterest}, provide a concrete example or real-life application of the concepts in the following text. \n\n ${highlightedText}`;
-            break;
-        case 'metaphoricalExplanation':
-            prompt = `As a ${instructorIdentity} with a level of expertise of ${levelOfExpertise} and an area of interest in ${areaOfInterest}, provide a metaphorical explanation of the ideas in the following text. Make it creative and engaging. \n\n ${highlightedText}`;
-            break;
-        default:
-            break;
+    const {
+        instructorIdentity = DEFAULT_VALUES.instructorIdentity,
+        levelOfExpertise = DEFAULT_VALUES.levelOfExpertise,
+        areaOfInterest = DEFAULT_VALUES.areaOfInterest,
+    } = formValues;
+
+    const promptTemplates = {
+        // personalize: `${highlightedText}\n\nThe given text is educational material like an explanation, example, or practice problem for a concept. You will transform it to include elements that are relevant to a student with the interest: ${areaOfInterest} and level of expertise with the topic: ${levelOfExpertise}. Your goal is still to explain the topic in the preceding text but explain it in such a way that someone with the interest ${areaOfInterest} will find it relevant and or make it clear how the concept can be used by someone with the interest ${areaOfInterest}. Do not force metaphors or include too much text. Phrase all wordings as if you were a ${instructorIdentity}. the length of the new text MUST BE APPROXIMATELY THE SAME LENGTH AS THE EXISTING TEXT.`,
+        personalize: `${highlightedText}\n\ Re-explain the concept in the preceding text by providing a concrete example of how the concept can be applied by a practitioner of ${areaOfInterest}. DO NOT EXPLAIN WITH A METAPHOR USE A CONCRETE EXAMPLE. Phrase all wordings as if you were a ${instructorIdentity}. the length of the new text MUST BE APPROXIMATELY THE SAME LENGTH AS THE EXISTING TEXT.`,
+        simplify: `${highlightedText}\n\nThe given text is educational material like an explanation, example, or practice problem for a concept. You will re-explain the concept by demonstrating how it could be useful to a person interested in ${areaOfInterest}. Do not try to come up with metaphors. Use Concrete Examples instead. Phrase all wordings as if you were a ${instructorIdentity}. the length of the new text MUST BE APPROXIMATELY THE SAME LENGTH AS THE EXISTING TEXT.`,
+        // simplify: `${highlightedText}\n\nAs an ${instructorIdentity} simplify the given text while keeping the core ideas the same. Make it more understandable for someone of a level of expertise ${levelOfExpertise}.`,
+        concreteExample: `${highlightedText}\n\nGiven the topic in this text above, create a concrete example of how it can be applied by someone with an area of interest in ${areaOfInterest}. Ensure that your concrete example is appropriate for a student with the following level of expertise: ${levelOfExpertise}. Phrase all wordings as a ${instructorIdentity} would.`,
+        metaphoricalExplanation: `${highlightedText}\n\nGiven the topic in this text above, create a metaphorical or analogy-based explanation of the topic that is personalized to the student's area of interest which is ${areaOfInterest}. Make sure to use references and concepts that are relevant to someone with an interest in ${areaOfInterest}. Ensure that your metaphorical or analogy-based explanation is appropriate for a student with the following level of expertise: ${levelOfExpertise}. Phrase all wordings as a ${instructorIdentity} would.`,
+    };
+
+    return promptTemplates[formValues.transformationType] || promptTemplates.personalize;
+}
+
+/**
+ * Close the popup after processing the form
+ */
+function closePopup() {
+    const container = document.getElementById('joltedExtensionPopupContainer');
+    if (container) {
+        container.style.display = 'none';
     }
-    return prompt;
 }
