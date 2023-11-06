@@ -1,6 +1,6 @@
 {
-  "name": "JoltEd Chrome Extension Prototype",
-  "description": "Protoype extension built with React and OpenAI API",
+  "name": "JoltEd Chrome Extension",
+  "description": "Generate personalized explanations and examples to enhance your online learning.",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": [
