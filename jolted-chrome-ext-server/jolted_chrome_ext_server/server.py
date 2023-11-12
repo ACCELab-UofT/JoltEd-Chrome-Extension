@@ -32,7 +32,6 @@ async def read_root():
 OPENAI_API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-
 @app.post("/ask-gpt")
 async def ask_gpt(req: Data):
     # TODO: add some sort of type checking on prompt. Does it exist?
