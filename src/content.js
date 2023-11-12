@@ -1,7 +1,6 @@
 // NOTE: you can't use import statements in the content.js file
 
 (async () => {
-    console.log("actual content js")
     const src = chrome.runtime.getURL("./main.js");
     const contentMain = await import("./main.js");
     const srcPopup = chrome.runtime.getURL("./popupMod.js");
@@ -12,6 +11,16 @@
     const contentReplacement = await import("./textReplacementMod.js");
     // contentMain.main();
 })();
+
+async function getRequestAddress() {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage('get-install-type', (response) => {
+      const requestAddress = response == "development" ? "http://localhost:8000/ask-gpt" : "https://jolted-chrome-extension-production.up.railway.app/ask-gpt";
+      console.log(requestAddress)
+      resolve(requestAddress);
+    });
+  });
+}
 
 // This listener waits for messages from other parts of the extension or even other extensions.
 // The onMessage event is fired when a message is sent from either an extension process (by runtime.sendMessage) 
@@ -95,8 +104,10 @@ const findReference = (highlightedText) => {
 // Fetch data from a local server endpoint, handling it in chunks.
 // This allows for potential real-time processing as each chunk of data is received.
 const fetchData = async (prompt, onChunkReceived) => {
+    const requestAddress = await getRequestAddress();
+
     try {
-        const response = await fetch("http://localhost:8000/ask-gpt", {
+        const response = await fetch(requestAddress, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -142,8 +153,6 @@ function recreateRange(rangeDetails) {
 
 function getNodeFromPath(path) {
     let node = document.body;
-    // console.log(document.body.childNodes)
-    // console.log(document.body.childNodes[1].childNodes)
     for (let i = 0; i < path.length; i++) {
         console.log(path[i])
         console.log(node)
