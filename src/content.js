@@ -16,7 +16,6 @@ async function getRequestAddress() {
   return new Promise((resolve) => {
     chrome.runtime.sendMessage('get-install-type', (response) => {
       const requestAddress = response == "development" ? "http://localhost:8000/ask-gpt" : "https://jolted-chrome-extension-production.up.railway.app/ask-gpt";
-      console.log(requestAddress)
       resolve(requestAddress);
     });
   });
