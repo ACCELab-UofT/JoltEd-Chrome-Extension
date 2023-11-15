@@ -1,5 +1,8 @@
 // NOTE: you can't use import statements in the content.js file
 
+const DEV_ADDRESS = "http://localhost:8000/ask-gpt";
+const PROD_ADDRESS = "https://jolted-chrome-extension-production.up.railway.app/ask-gpt";
+
 (async () => {
     const src = chrome.runtime.getURL("./main.js");
     const contentMain = await import("./main.js");
@@ -15,7 +18,7 @@
 async function getRequestAddress() {
   return new Promise((resolve) => {
     chrome.runtime.sendMessage('get-install-type', (response) => {
-      const requestAddress = response == "development" ? "http://localhost:8000/ask-gpt" : "https://jolted-chrome-extension-production.up.railway.app/ask-gpt";
+      const requestAddress = response == "development" ? DEV_ADDRESS : PROD_ADDRESS;
       resolve(requestAddress);
     });
   });
