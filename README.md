@@ -30,7 +30,7 @@ First, make a clone of this repository.
 Then, on Chrome, type ```chrome://extensions``` into the address bar and press the load "unpacked button" in the top left. Navigate to this project folder (wherever it has been cloned locally) and select it. The extension should now be added to your list of Chrome extensions. When enabled, highlighting text on a webpage should display the lightning bolt icon.
 
 <p align="center">
-  <img width="400" alt="image" src="https://github.com/jaeyonglee3/JoltEd-Chrome-Extension/assets/73498725/e6fb9bbe-5adc-479f-a264-38dfd508aeae">
+  <img width="415" alt="Screenshot 2023-11-16 at 3 47 24 PM" src="https://github.com/ACCELab-UofT/JoltEd-Chrome-Extension/assets/73498725/7ca0ffed-1ae3-4aa2-9f0e-cfe8c8c31bff">
 </p>
 
 Use the reload icon next to the enable toggle to sync any code changes made locally with the extension loaded in the browser. 
