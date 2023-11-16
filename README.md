@@ -1,8 +1,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <h1 align="center">JoltEd - Chrome Extension</h1>
-
+  <h1 align="center">JoltEd Chrome Extension</h1>
+  <img alt="JoltEd Chrome Extension icon" src="https://github.com/ACCELab-UofT/JoltEd-Chrome-Extension/assets/73498725/2101a40c-4f5d-4b7a-b014-c324008f53e8">
   <p align="center">
     The JoltEd Chrome Extension provides personalized explanation generation and example provisioning of educational content with the aim to authentically increase students' interest and value in their learning.
   </p>
